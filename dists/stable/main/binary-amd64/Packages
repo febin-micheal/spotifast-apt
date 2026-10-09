@@ -1,0 +1,18 @@
+Package: spotifast
+Architecture: amd64
+Version: 0.12.0-1
+Priority: optional
+Section: sound
+Maintainer: Febin Micheal Antony <febinmichealantony@gmail.com>
+Installed-Size: 39435
+Depends: libc6 (>= 2.35), libdbus-1-3, libgl1, libegl1, libxkbcommon0, libxkbcommon-x11-0, libwayland-client0, libwayland-cursor0, libwayland-egl1, libx11-6, libx11-xcb1, libxcursor1, libxi6, libxrandr2, libasound2, libpulse0, libgcc-s1, libstdc++6
+Filename: pool/main/spotifast_0.12.0-1_amd64.deb
+Size: 18044062
+MD5sum: 2a270b4eeb5b78d8c6194ff096d6d011
+SHA1: 4213c7715d1e360bbf2b766b024e22d8245c3e05
+SHA256: d30e14b7f7c0425971af166dc791af7785b306e62248892913b937ea9ac4346c
+SHA512: a1dad37042d26d5a530ab07333a6baece50855483a3badd8b592629b7d8a9472d79b12d2b4da848124b1fc1d682043e987b4fec9a83b167c369ddd17da337fc1
+Homepage: https://github.com/crmne/spotifast
+Description: A native Spotify client (unofficial Ubuntu 22.04 build of Spotifast).
+ Built from the upstream release tag; not affiliated with Spotify.
+

@@ -1,0 +1,43 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Architectures: amd64
+Codename: stable
+Components: main
+Date: Fri, 09 Oct 2026 08:53:34 +0000
+Description: Unofficial Spotifast packages for Ubuntu 22.04 and newer
+Label: spotifast-apt
+Origin: spotifast-apt
+Suite: stable
+MD5Sum:
+ 9b02745bb32484e06e8e4ddb7ce7fb6b              220 Release
+ f58590fb93781aae3d894e98a5de7b6b              984 main/binary-amd64/Packages
+ 5dbebda8825875c4bfe99b8652fee662              644 main/binary-amd64/Packages.gz
+SHA1:
+ 954ea171e565bdb612f998ee343409813b00118d              220 Release
+ 95cbf3d579702fac4b1273d3fd5b6510e5465c0e              984 main/binary-amd64/Packages
+ 6e6d99cb820cbf8b57c7aa5b92244b2cfb87dc88              644 main/binary-amd64/Packages.gz
+SHA256:
+ 7b5f62a15343e8a44e637f2cb14f3066dc2848a67703253d5b12ddffa60a6759              220 Release
+ 88836732492bee13462930d644c5eb1461cc4c0faffdfe74aebbb10b61f05610              984 main/binary-amd64/Packages
+ 48a7eb7deee8b5f3e803581f24105d4c7d5ad201bb279a2603f75ebf1cd367c1              644 main/binary-amd64/Packages.gz
+SHA512:
+ bdb335715f6768a6580a3ee231079473414512d23b0dee496cfc4e96b9fe62976be80313bf5080e956b926cf407a03b19d87de4f8fddb34ee903526c07eb68ed              220 Release
+ 135e4e0c53ff0283df90d8a546e994f6cebf2bf4957f647f7f9cd951141fafe120f14e394f864e05cd3041e4bdc11df52190a356aa37d3f3bf447ccdb696491a              984 main/binary-amd64/Packages
+ f71eac20f45b697019181aacd146f6cc036701987d7b9f9f01b171edc215586f34bef2bed0f1925c956290ce071a6c1ae029505e033df648b98fe133bef1c0e5              644 main/binary-amd64/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEUOO0U0xo5M87rieco9XzS1hLFswFAmrIq44ACgkQo9XzS1hL
+FsynsA//U9PXp7Tm33pbTJ741iH5aDhunNk5ZUMeAirZR8jH+SiCk6mdBqYl4Gcv
+KI7mgSqqImws8b6q0MfPjRrMRedbwmAtUlVyLGLuwleFssOjPldZqQut62scGQwd
+j9vhSAy2HalsvTjs9GjmMSKAbfmORf0/3JePmluDZ/woMMs10ESVQdPmgZsLqx+y
+2eucHhM2M0cjPaONTThyyhoJYtxCSIDEVNcabtvJe2s3t2ImcS+3m5ZYXX+j2WME
+1GNdEceMMicI0CqnT5lm3xAYunhOU8QLRki5z/JkRSmk/+N3vDLWZnjgV2kdy90R
+V1VxfpttiMGBUyhPXsvOOMVRYEsI2wHijSK/9lmm3d3CwPWHbVF1AV9mfQxImnMF
+dpFrbBy7xEurg3FgwwP8g6KVesN34JteUWd3zuu40cvvhZUR/CuokIomtX9N0CZS
+2Cp6Be+rlZrNQ7xT0AYyb5y33JJrJm+xOtVa/uU0G4ZBHs2K6lv6MgSeon80SSLv
+3JUu11kdw+9sOfkoq3Lo9YYUJGk6tPl5eB9utzSOZNlN6dfKYLXeUJyrXGBCLn1i
+dx224hcyFfC5ysxHwG5cZrX0tEpKO7HTeQfw22J7McesCutHVBvAk8GMS5hl+VUD
+rQgHboTsG08nvW/3wf9V0aDk8wqfi1uiiYMj0qLbADwvEEoNSw4=
+=UDMg
+-----END PGP SIGNATURE-----
