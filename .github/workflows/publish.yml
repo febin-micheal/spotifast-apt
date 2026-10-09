@@ -73,7 +73,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libasound2-dev libpulse-dev libxkbcommon-dev libxkbcommon-x11-dev \
-            libwayland-dev libdbus-1-dev libx11-dev libxcb1-dev pkg-config \
+            libwayland-dev libgl-dev libegl-dev libdbus-1-dev libx11-dev libxcb1-dev pkg-config \
             clang libclang-dev apt-utils
           pip install --user cmake
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
