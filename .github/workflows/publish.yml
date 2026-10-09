@@ -1,0 +1,141 @@
+name: build-and-publish
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday 03:17 UTC
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Upstream tag (empty = latest release)"
+        required: false
+        default: ""
+      revision:
+        description: "Package revision"
+        required: false
+        default: "1"
+      force:
+        description: "Rebuild even if already published"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+      IN_TAG: ${{ inputs.tag }}
+      IN_REV: ${{ inputs.revision }}
+      IN_FORCE: ${{ inputs.force }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve upstream version
+        id: v
+        run: |
+          tag="$IN_TAG"
+          [ -n "$tag" ] || tag="$(gh api repos/crmne/spotifast/releases/latest --jq .tag_name)"
+          rev="${IN_REV:-1}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "ver=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "rev=$rev" >> "$GITHUB_OUTPUT"
+          echo "Upstream: $tag (package revision $rev)"
+
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+
+      - name: Already published?
+        id: chk
+        run: |
+          f="site/pool/main/spotifast_${{ steps.v.outputs.ver }}-${{ steps.v.outputs.rev }}_amd64.deb"
+          if [ -f "$f" ] && [ "$IN_FORCE" != "true" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Already published, nothing to build."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fetch upstream source
+        if: steps.chk.outputs.skip != 'true'
+        run: git clone --depth 1 --branch "${{ steps.v.outputs.tag }}" https://github.com/crmne/spotifast src
+
+      - name: Install build dependencies
+        if: steps.chk.outputs.skip != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libasound2-dev libpulse-dev libxkbcommon-dev libxkbcommon-x11-dev \
+            libwayland-dev libdbus-1-dev libx11-dev libxcb1-dev pkg-config \
+            clang libclang-dev apt-utils
+          pip install --user cmake
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install Rust toolchain (version pinned by upstream)
+        if: steps.chk.outputs.skip != 'true'
+        working-directory: src
+        run: |
+          ch="$(sed -n 's/^channel *= *"\(.*\)"/\1/p' rust-toolchain.toml)"
+          rustup toolchain install "$ch" --profile minimal
+          rustup default "$ch"
+          rustc --version
+
+      - name: Build
+        if: steps.chk.outputs.skip != 'true'
+        working-directory: src
+        run: cargo build --release --locked
+
+      - name: Package .deb
+        if: steps.chk.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.v.outputs.ver }}
+          REVISION: ${{ steps.v.outputs.rev }}
+        run: |
+          curl -fsSL -o nfpm.deb https://github.com/goreleaser/nfpm/releases/download/v2.47.0/nfpm_2.47.0_amd64.deb
+          sudo dpkg -i nfpm.deb
+          mkdir -p dist
+          nfpm package -f nfpm.yaml -p deb -t dist/
+          ls -l dist
+
+      - name: Test install
+        if: steps.chk.outputs.skip != 'true'
+        run: |
+          sudo apt-get install -y ./dist/*.deb
+          spotifast --version
+          test -f /usr/share/applications/spotifast.desktop
+
+      - name: Update signed apt repository
+        if: steps.chk.outputs.skip != 'true'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          set -e
+          cd site
+          mkdir -p pool/main dists/stable/main/binary-amd64
+          cp ../dist/*.deb pool/main/
+          ls -1t pool/main/*.deb | tail -n +4 | xargs -r rm -f
+          apt-ftparchive packages pool > dists/stable/main/binary-amd64/Packages
+          gzip -9kf dists/stable/main/binary-amd64/Packages
+          apt-ftparchive -c ../packaging/apt-release.conf release dists/stable > dists/stable/Release
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          gpg --batch --yes --pinentry-mode loopback --passphrase '' -abs -o dists/stable/Release.gpg dists/stable/Release
+          gpg --batch --yes --pinentry-mode loopback --passphrase '' --clearsign -o dists/stable/InRelease dists/stable/Release
+          gpg --export > key.gpg
+          touch .nojekyll
+
+      - name: Commit to gh-pages
+        run: |
+          cd site
+          date -u +%F > .last-check   # weekly activity keeps GitHub from pausing the schedule
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish spotifast ${{ steps.v.outputs.ver }}-${{ steps.v.outputs.rev }}" || git commit --allow-empty -m "Weekly check"
+          git push origin gh-pages
